@@ -430,12 +430,16 @@
         }
       }
 
+      // Recursively look up for symbols
+      if (isSymbol(translations)) {
+        scope = symbolToString(translations);
+        console.log("[Symbol]")
+        console.log(translations);
+        console.log(scope);
+        return this.lookup(scope, options);
+      }
+
       if (translations !== undefined && translations !== null) {
-        // Recursively look up for symbols
-        if (isSymbol(translations)) {
-          scope = symbolToString(translations);
-          return this.lookup(scope, options);
-        }
         return translations;
       }
 
