@@ -14,6 +14,10 @@ describe("Translate", function(){
     expect(I18n.t("hello")).toEqual("Hello World!");
   });
 
+  it("returns a recursive lookup translation", function() {
+    expect(I18n.t("shallow")).toEqual("The ocean is pretty deep, isn't it!");
+  });
+
   it("returns translation as object", function(){
     expect(I18n.t("greetings")).toEqual(I18n.translations.en.greetings);
   });

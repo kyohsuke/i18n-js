@@ -86,6 +86,23 @@
     return val === true || val === false;
   };
 
+  // Is a given string a symbol?
+  var isSymbol = function(string) {
+    if (typeof string !== 'string') {
+      return false;
+    }
+    return string.charAt(0) === ':'
+  };
+
+  // Converts symbol to string, Example:
+  // ':errors' -> 'errors'
+  var symbolToString = function(string) {
+    if (typeof string !== 'string') {
+      return string;
+    }
+    return string.substring(1);
+  }
+
   var decimalAdjust = function(type, value, exp) {
     // If the exp is undefined or zero...
     if (typeof exp === 'undefined' || +exp === 0) {
@@ -385,9 +402,9 @@
   // This is used internally by some functions and should not be used as an
   // public API.
   I18n.lookup = function(scope, options) {
-    options = options || {}
+    var preparedOptions = this.prepareOptions(options);
 
-    var locales = this.locales.get(options.locale).slice()
+    var locales = this.locales.get(preparedOptions.locale).slice()
       , requestedLocale = locales[0]
       , locale
       , scopes
@@ -395,7 +412,7 @@
       , translations
     ;
 
-    fullScope = this.getFullScope(scope, options);
+    fullScope = this.getFullScope(scope, preparedOptions);
 
     while (locales.length) {
       locale = locales.shift();
@@ -414,12 +431,17 @@
       }
 
       if (translations !== undefined && translations !== null) {
+        // Recursively look up for symbols
+        if (isSymbol(translations)) {
+          scope = symbolToString(translations);
+          return this.lookup(scope, options);
+        }
         return translations;
       }
-    }
 
-    if (isSet(options.defaultValue)) {
-      return lazyEvaluate(options.defaultValue, scope);
+      if (this.isSet(preparedOptions.defaultValue)) {
+        return preparedOptions.defaultValue;
+      }
     }
   };
 

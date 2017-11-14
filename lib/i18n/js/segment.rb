@@ -72,6 +72,8 @@ module I18n
 
       # Outputs pretty or ugly JSON depending on :pretty_print option
       def print_json(translations)
+        translations = Utils.deep_stringify(translations)
+
         if @pretty_print
           JSON.pretty_generate(translations)
         else

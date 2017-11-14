@@ -47,6 +47,20 @@ module I18n
           seed[key] = value.is_a?(Hash) ? deep_key_sort(value) : value
         end
       end
+
+      def self.deep_stringify(hash)
+        hash.keys.each_with_object({}) do |key, seed|
+          value = hash[key]
+          seed[key] = case
+                      when value.is_a?(Hash)
+                        deep_stringify(value)
+                      when value.is_a?(Symbol)
+                        ":#{value.to_s}"
+                      else
+                        value
+                      end
+        end
+      end
     end
   end
 end
